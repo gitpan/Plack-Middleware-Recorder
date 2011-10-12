@@ -6,7 +6,9 @@ use warnings;
 use Getopt::Long;
 use HTTP::Request;
 use LWP::UserAgent;
+use LWP::Protocol::PSGI;
 use Plack::VCR;
+use Plack::Util;
 use URI;
 
 sub usage {
@@ -31,8 +33,14 @@ usage if $help || !@ARGV;
 my ( $requests_file, $server ) = @ARGV;
 
 if(defined $server) {
-    $server = 'http://' . $server unless $server =~ m!^https?://!;
-    $server = URI->new($server);
+    if(-f $server) {
+        my $app = Plack::Util::load_psgi($server);
+        LWP::Protocol::PSGI->register($app);
+        undef $server;
+    } else {
+        $server = 'http://' . $server unless $server =~ m!^https?://!;
+        $server = URI->new($server);
+    }
 }
 
 my $vcr = Plack::VCR->new(filename => $requests_file);
@@ -73,7 +81,7 @@ plack-replay - Utility script for replaying PSGI app requests
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -81,11 +89,14 @@ version 0.01
 
   plack-replay requests.out http://my.server/
 
+  plack-replay requests.out app.psgi
+
 =head1 DESCRIPTION
 
 This script replays a sequence of requests previously recorded by
-L<plack-record> against a server.  If the server is not specified,
-the requests are replayed against the server that recorded them.
+L<plack-record> against a server or a PSGI application.  If the server
+is not specified, the requests are replayed against the server that recorded
+them.
 
 =head1 OPTIONS
 

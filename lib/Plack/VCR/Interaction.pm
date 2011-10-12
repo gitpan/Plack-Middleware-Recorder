@@ -1,7 +1,7 @@
 ## no critic (RequireUseStrict)
 package Plack::VCR::Interaction;
 {
-  $Plack::VCR::Interaction::VERSION = '0.01';
+  $Plack::VCR::Interaction::VERSION = '0.02';
 }
 
 ## use critic (RequireUseStrict)
@@ -28,11 +28,11 @@ Plack::VCR::Interaction - Represents a single HTTP interaction
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 DESCRIPTION
 
-Retrieved from L<Plack::VCR/next>, objects of this
+Retrieved from L<Plack::VCR/next>; objects of this
 class currently only contain an L<HTTP::Request>.
 
 =head1 METHODS
@@ -40,6 +40,10 @@ class currently only contain an L<HTTP::Request>.
 =head2 request
 
 Returns the L<HTTP::Request> for this interaction.
+
+=head1 SEE ALSO
+
+L<Plack::VCR>
 
 =begin comment
 

@@ -1,7 +1,7 @@
 ## no critic (RequireUseStrict)
 package Plack::Middleware::Recorder;
 {
-  $Plack::Middleware::Recorder::VERSION = '0.01';
+  $Plack::Middleware::Recorder::VERSION = '0.02';
 }
 
 ## use critic (RequireUseStrict)
@@ -16,8 +16,14 @@ use IO::String;
 use Storable qw(nfreeze thaw);
 use namespace::clean;
 
+use Plack::Util::Accessor qw/active start_url stop_url/;
+
 sub prepare_app {
     my ( $self ) = @_;
+
+    $self->active(1)                    unless defined $self->active;
+    $self->start_url('/recorder/start') unless defined $self->start_url;
+    $self->stop_url('/recorder/stop')   unless defined $self->stop_url;
 
     my $output = $self->{'output'};
     croak "output parameter required" unless defined $output;
@@ -62,11 +68,38 @@ sub env_to_http_request {
 sub call {
     my ( $self, $env ) = @_;
 
-    my $app    = $self->app;
-    my $req    = $self->env_to_http_request($env);
-    my $frozen = nfreeze($req);
-    $self->{'output'}->write(pack('Na*', length($frozen), $frozen));
-    $self->{'output'}->flush;
+    my $app       = $self->app;
+    my $start_url = $self->start_url;
+    my $stop_url  = $self->stop_url;
+    my $path      = $env->{'PATH_INFO'};
+
+    $env->{__PACKAGE__ . '.start_url'} = $start_url;
+    $env->{__PACKAGE__ . '.stop_url'}  = $stop_url;
+
+    if($path =~ m!\Q$start_url\E!) {
+        $self->active(1);
+        $env->{__PACKAGE__ . '.active'} = $self->active;
+        return [
+            200,
+            ['Content-Type' => 'text/plain'],
+            [ 'Request recording is ON' ],
+        ];
+    } elsif($path =~ m!\Q$stop_url\E!) {
+        $self->active(0);
+        $env->{__PACKAGE__ . '.active'} = $self->active;
+        return [
+            200,
+            ['Content-Type' => 'text/plain'],
+            [ 'Request recording is OFF' ],
+        ];
+    } elsif($self->active) {
+        my $req    = $self->env_to_http_request($env);
+        my $frozen = nfreeze($req);
+        $self->{'output'}->write(pack('Na*', length($frozen), $frozen));
+        $self->{'output'}->flush;
+    }
+
+    $env->{__PACKAGE__ . '.active'} = $self->active;
 
     return $app->($env);
 }
@@ -83,22 +116,26 @@ Plack::Middleware::Recorder - Plack middleware that records your client-server i
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
   use Plack::Builder;
 
   builder {
-    enable 'Recorder', output => 'requests.out';
+    enable 'Recorder',
+        output    => 'requests.out',    # required
+        active    => 1,                 # optional
+        start_url => '/recorder/start', # optional
+        stop_url  => '/recorder/stop';  # optional
     $app;
   };
 
 =head1 DESCRIPTION
 
 This middleware records the stream of requests and responses that your
-application goes through to a file.  See Plack::Util::RequestProcessor
-for more.
+application goes through to a file.  The middleware records all requests while
+active; the active state can be altered via L</start_url> and L</stop_url">.
 
 =head1 OPTIONS
 
@@ -106,6 +143,20 @@ for more.
 
 Either a filename, a glob reference, or an IO::Handle where the serialized
 requests will be written to.  To read these requests, use L<Plack::VCR>.
+
+=head2 active
+
+Whether or not to start recording once the application starts.  Defaults to 1.
+
+=head2 start_url
+
+A relative URL that will tell the recorder middleware to record subsequent
+requests if requested.  Defaults to '/recorder/start'.
+
+=head2 stop_url
+
+A relative URL that will tell the recorder middleware to stop recording requests.
+Defaults to '/recorder/stop'.
 
 =head1 RATIONALE
 
@@ -120,10 +171,12 @@ is submitting to get me on the right track.
 
 =head1 FURTHER IMPROVEMENTS
 
-The first release of this distribution is fairly simple; it only records and
+The first release of this distribution was fairly simple; it only records and
 retrieves requests.  In the future, I'd like a bunch of features to be added:
 
 =head2 Specifying the output as a filename doesn't work properly with CGI (the middleware clobbers the output file)
+
+=head2 The middleware probably won't function correctly in a concurrent environment like Starman.
 
 =head2 Recording responses could be useful for generating test scripts and the like.
 

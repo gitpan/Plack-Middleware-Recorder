@@ -15,11 +15,19 @@ if($runner->{'help'}) {
     exec 'plackup', '--help';
 }
 
-my $app = $runner->{'app'} || $runner->{'argv'}[0] || 'app.psgi';
-$app    = Plack::Util::load_psgi $app;
+my $args = $runner->{'argv'};
+my $app  = $runner->{'app'} || $args->[0] || 'app.psgi';
+$app     = Plack::Util::load_psgi $app;
+
+my $output;
+if(@$args > 1) {
+    $output = $args->[1];
+} else {
+    $output = \*STDOUT;
+}
 
 $runner->run(builder {
-    enable 'Recorder', output => \*STDOUT;
+    enable 'Recorder', output => $output;
     $app;
 });
 
@@ -33,16 +41,21 @@ plack-record - Utility script for recording PSGI app requests
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
   plack-record > requests.out
 
+  plack-record app.psgi > requests.out
+
+  plack-record app.psgi requests.out
+
 =head1 DESCRIPTION
 
 This script records the requests that go to your PSGI application and writes
-their serialized forms to standard output.
+their serialized forms to a file.  If no file is provided, the requests are
+written to standard out.
 
 =head1 OPTIONS
 

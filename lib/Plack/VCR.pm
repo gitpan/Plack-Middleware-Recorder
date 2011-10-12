@@ -1,7 +1,7 @@
 ## no critic (RequireUseStrict)
 package Plack::VCR;
 {
-  $Plack::VCR::VERSION = '0.01';
+  $Plack::VCR::VERSION = '0.02';
 }
 
 ## use critic (RequireUseStrict)
@@ -67,7 +67,7 @@ Plack::VCR - API for interacting with a frozen request file
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 

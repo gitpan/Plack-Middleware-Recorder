@@ -6,6 +6,7 @@ META.yml
 README
 bin/plack-record
 bin/plack-replay
+lib/Plack/Middleware/Debug/Recorder.pm
 lib/Plack/Middleware/Recorder.pm
 lib/Plack/VCR.pm
 lib/Plack/VCR/Interaction.pm
@@ -16,6 +17,11 @@ t/03-post-body.t
 t/04-bad-filename-vcr.t
 t/05-dont-require-http-request.t
 t/06-bad-filename-mw.t
+t/07-start-stop.t
+t/08-inactive.t
+t/09-custom-urls.t
+t/10-debug-panel.t
+t/lib/Plack/Recorder/TestUtils.pm
 xt/author/critic.t
 xt/release/dist-manifest.t
 xt/release/kwalitee.t
