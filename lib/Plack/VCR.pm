@@ -1,7 +1,7 @@
 ## no critic (RequireUseStrict)
 package Plack::VCR;
 {
-  $Plack::VCR::VERSION = '0.02';
+  $Plack::VCR::VERSION = '0.03';
 }
 
 ## use critic (RequireUseStrict)
@@ -40,6 +40,9 @@ sub next {
     croak "Unexpected end of file" unless $bytes == 4;
 
     $size = unpack('N', $size);
+    if($size > -s $file) {
+        croak "Invalid file contents";
+    }
     my $request = '';
     $bytes = $file->read($request, $size);
     croak "Unexpected end of file" unless $bytes == $size;
@@ -67,7 +70,7 @@ Plack::VCR - API for interacting with a frozen request file
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -106,7 +109,7 @@ Rob Hoelz <rob@hoelz.ro>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Rob Hoelz.
+This software is copyright (c) 2012 by Rob Hoelz.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

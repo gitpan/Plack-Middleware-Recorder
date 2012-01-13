@@ -8,10 +8,11 @@ build_requires:
   Module::Build: 0.3601
   Test::Exception: 0
   Test::More: 0
+  Test::TCP: 0
 configure_requires:
   Module::Build: 0.3601
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300002, CPAN::Meta::Converter version 2.112621'
+generated_by: 'Dist::Zilla version 4.300006, CPAN::Meta::Converter version 2.113640'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -23,8 +24,8 @@ requires:
   HTTP::Request: 0
   IO::File: 0
   IO::String: 0
-  LWP::Protocol::PSGI: 0
   Plack: 0
+  Plack::Client: 0
   Plack::Middleware::Debug: 0
   Pod::Usage: 0
   Storable: 0
@@ -35,4 +36,4 @@ resources:
   bugtracker: https://github.com/hoelzro/plack-middleware-recorder/issues
   homepage: https://github.com/hoelzro/plack-middleware-recorder
   repository: https://github.com/hoelzro/plack-middleware-recorder.git
-version: 0.02
+version: 0.03

@@ -1,7 +1,7 @@
 ## no critic (RequireUseStrict)
 package Plack::Middleware::Recorder;
 {
-  $Plack::Middleware::Recorder::VERSION = '0.02';
+  $Plack::Middleware::Recorder::VERSION = '0.03';
 }
 
 ## use critic (RequireUseStrict)
@@ -106,6 +106,8 @@ sub call {
 
 1;
 
+# ABSTRACT: Plack middleware that records your client-server interactions
+
 
 
 =pod
@@ -116,7 +118,7 @@ Plack::Middleware::Recorder - Plack middleware that records your client-server i
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -208,7 +210,7 @@ Rob Hoelz <rob@hoelz.ro>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Rob Hoelz.
+This software is copyright (c) 2012 by Rob Hoelz.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
@@ -226,6 +228,4 @@ feature.
 
 
 __END__
-
-# ABSTRACT: Plack middleware that records your client-server interactions
 

@@ -1,7 +1,7 @@
 ## no critic (RequireUseStrict)
 package Plack::VCR::Interaction;
 {
-  $Plack::VCR::Interaction::VERSION = '0.02';
+  $Plack::VCR::Interaction::VERSION = '0.03';
 }
 
 ## use critic (RequireUseStrict)
@@ -18,6 +18,8 @@ sub new {
 
 1;
 
+# ABSTRACT: Represents a single HTTP interaction
+
 
 
 =pod
@@ -28,7 +30,7 @@ Plack::VCR::Interaction - Represents a single HTTP interaction
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 
@@ -61,7 +63,7 @@ Rob Hoelz <rob@hoelz.ro>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Rob Hoelz.
+This software is copyright (c) 2012 by Rob Hoelz.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
@@ -79,6 +81,4 @@ feature.
 
 
 __END__
-
-# ABSTRACT: Represents a single HTTP interaction
 

@@ -4,9 +4,10 @@ use strict;
 use warnings;
 
 use Getopt::Long;
+use HTTP::Message::PSGI;
 use HTTP::Request;
-use LWP::UserAgent;
-use LWP::Protocol::PSGI;
+use HTTP::Response;
+use Plack::Client;
 use Plack::VCR;
 use Plack::Util;
 use URI;
@@ -32,19 +33,27 @@ usage if $help || !@ARGV;
 
 my ( $requests_file, $server ) = @ARGV;
 
+my $ua;
+
 if(defined $server) {
     if(-f $server) {
         my $app = Plack::Util::load_psgi($server);
-        LWP::Protocol::PSGI->register($app);
+        $ua     = Plack::Client->new(
+            http => sub {
+                return $app;
+            },
+        );
         undef $server;
     } else {
+        $ua = Plack::Client->new(
+            http => {},
+        );
         $server = 'http://' . $server unless $server =~ m!^https?://!;
         $server = URI->new($server);
     }
 }
 
 my $vcr = Plack::VCR->new(filename => $requests_file);
-my $ua  = LWP::UserAgent->new;
 
 while(my $interaction = $vcr->next) {
     my $req      = $interaction->request;
@@ -64,12 +73,18 @@ while(my $interaction = $vcr->next) {
     $req->uri($uri);
 
     my $res = $ua->request($req);
+       $res = HTTP::Response->from_psgi($res->finalize);
+
     if($verbosity >= 2) {
         print $res->as_string;
     } elsif($verbosity == 1) {
         print $res->status_line, "\n";
     }
 }
+
+# PODNAME: plack-replay
+
+# ABSTRACT: Utility script for replaying PSGI app requests
 
 
 
@@ -81,7 +96,7 @@ plack-replay - Utility script for replaying PSGI app requests
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -112,7 +127,7 @@ Increases the verbosity of L<plack-replay>.  By default, plack replay outputs
 nothing; verbosity level one outputs the status line of each response.
 Verbosity level two outputs each HTTP response in its entirety.
 
-=back 4
+=back
 
 =head1 SEE ALSO
 
@@ -124,7 +139,7 @@ Rob Hoelz <rob@hoelz.ro>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Rob Hoelz.
+This software is copyright (c) 2012 by Rob Hoelz.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
@@ -142,8 +157,4 @@ feature.
 
 
 __END__
-
-# PODNAME: plack-replay
-
-# ABSTRACT: Utility script for replaying PSGI app requests
 

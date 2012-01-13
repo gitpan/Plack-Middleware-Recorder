@@ -1,5 +1,7 @@
 Revision history for Plack-Middleware-Recorder
 
+0.03 January 13 2012
+
 0.02 October 12 2011
      - Add /recorder/start, /recorder/stop
      - Add a debug panel for communicating with the recorder middleware

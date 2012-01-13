@@ -11,7 +11,8 @@ my %module_build_args = (
     "HTTP::Request::Common" => 0,
     "Module::Build" => "0.3601",
     "Test::Exception" => 0,
-    "Test::More" => 0
+    "Test::More" => 0,
+    "Test::TCP" => 0
   },
   "configure_requires" => {
     "Module::Build" => "0.3601"
@@ -21,7 +22,7 @@ my %module_build_args = (
     "Rob Hoelz <rob\@hoelz.ro>"
   ],
   "dist_name" => "Plack-Middleware-Recorder",
-  "dist_version" => "0.02",
+  "dist_version" => "0.03",
   "license" => "perl",
   "module_name" => "Plack::Middleware::Recorder",
   "recommends" => {},
@@ -32,8 +33,8 @@ my %module_build_args = (
     "HTTP::Request" => 0,
     "IO::File" => 0,
     "IO::String" => 0,
-    "LWP::Protocol::PSGI" => 0,
     "Plack" => 0,
+    "Plack::Client" => 0,
     "Plack::Middleware::Debug" => 0,
     "Pod::Usage" => 0,
     "Storable" => 0,
